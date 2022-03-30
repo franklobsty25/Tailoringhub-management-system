@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'subscription_reference',
     ];
 
     /**
@@ -41,4 +42,40 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Getting the user's role
+    public function role() {
+        return $this->hasOne(Role::class);
+    }
+
+    /**
+     * User refer to tailor/seamstress sign up
+     * This is to note a user/tailor has only one detail
+     */
+    public function profile() {
+        return $this->hasOne(Detail::class);
+    }
+
+    // Support message
+    public function support() {
+        return $this->hasMany(Support::class);
+    }
+
+    /**
+     * Checking user role if an administrator
+     */
+    public function hasAdminRole($admin) {
+        if ($this->role->role === $admin) {
+            return true;
+        }
+        return false;
+    }
+
+    public function customers() {
+        return $this->hasMany(Customer::class);
+    }
+
+    public function getFullNameAttribute() {
+        return "{$this->firstName} {$this->lastName}";
+    }
 }
